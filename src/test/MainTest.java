@@ -21,19 +21,24 @@ public class MainTest implements Observer {
 	};
 
 	public static void main(String[] args) throws NoSuchFieldException,
-			SecurityException {
+			SecurityException, InterruptedException {
 		cal = SimulationCalendar.getInstance();
 		// SimCalObservable obs = new SimCalObservable(cal);
 		// obs.addObserver(new MainTest());
-		// cal.startSimulationCalendar(6000, obs);
 		System.out.println("Start " + cal.getInstance().getTime() + " CC "
 				+ Calendar.getInstance().getTime());
 		// Timer timer = new Timer();
-
+		cal.startSimulationCalendar(6000);
+		SchedulerTest st = new SchedulerTest(cal);
 		// timer.scheduleAtFixedRate(myTask, Calendar.getInstance().getTime(),
 		// 60000);
 		while(true)
-		{;}
+		{
+			st.execute();
+			cal.add(cal.HOUR_OF_DAY, 1);
+			System.out.println("ADDING one hour "+ cal.getTime());
+			Thread.sleep(1000);
+		}
 		// testSimulationCalendar();
 
 		// CalendarTest.addNMinutesToTime(Calendar.getInstance());

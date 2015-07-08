@@ -57,18 +57,16 @@ public class SimulationCalendar extends GregorianCalendar {
 	/**
 	 * @param simulationHourTimeMs
 	 */
-	public synchronized void startSimulationCalendar(long simulationHourTimeMs,
-			SimCalObservable obs) {
+	public synchronized void startSimulationCalendar(long simulationHourTimeMs) {
 		this.simulationHourTimeMs = simulationHourTimeMs;
 		this.simulationMinTimeMs = (long) this.simulationHourTimeMs / 60l;
 		this.set(HOUR_OF_DAY, 0);
 		this.set(MINUTE, 0);
 		this.set(SECOND, 0);
 		this.set(MILLISECOND, 0);
-		this.obs = obs;
 		System.out.println("SimulationCalendar started " + this.getTime());
 		// timer.schedule(myTask, 2000, 2000); in Ms
-		timer.schedule(myTask, simulationMinTimeMs, simulationMinTimeMs);
+		//timer.schedule(myTask, simulationMinTimeMs, simulationMinTimeMs);
 	}
 
 	/**
