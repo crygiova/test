@@ -54,6 +54,7 @@ public class SimulationCalendar extends GregorianCalendar {
 
 	}
 
+	
 	/**
 	 * @param simulationHourTimeMs
 	 */
