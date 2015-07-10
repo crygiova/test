@@ -38,7 +38,7 @@ public class MainTest implements Observer {
 		cal = SimulationCalendar.getInstance();
 		Run0 r[] = new Run0[2];
 		r[0] = new Run1();
-		r[1] = new Run2();
+		r[1] = new Run2(r[0]);
 		Thread t[] = new Thread[2];
 		t[0] = new Thread(r[0]);
 		t[1] = new Thread(r[1]);

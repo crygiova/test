@@ -2,10 +2,10 @@ package test;
 
 import java.util.concurrent.SynchronousQueue;
 
-public class Run1 extends Run0  {
+public class Run1 extends Run0 {
 
 	public Run1() {
-		this.sq = new SynchronousQueue<Integer>();
+		super();
 	}
 
 	@Override
@@ -18,6 +18,9 @@ public class Run1 extends Run0  {
 				e.printStackTrace();
 			}
 			System.out.println("Run1....");
+			if (!this.msg.isEmpty()) {
+				System.out.println("Message in the Queue Run 1 "+ this.msg.remove());
+			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {

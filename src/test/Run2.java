@@ -3,9 +3,11 @@ package test;
 import java.util.concurrent.SynchronousQueue;
 
 public class Run2 extends Run0{
+	private Run0 r;
 
-	public Run2() {
-		this.sq = new SynchronousQueue<Integer>();
+	public Run2(Run0 r) {
+		super();
+		this.r = r;
 	}
 
 	@Override
@@ -18,6 +20,7 @@ public class Run2 extends Run0{
 				e.printStackTrace();
 			}
 			System.out.println("Run2....");
+			r.sendMsg("Ciao");
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e1) {
