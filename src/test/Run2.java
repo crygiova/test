@@ -1,41 +1,44 @@
 package test;
 
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-public class Run2 extends Run0{
-	private Run0 r;
+public class Run2 extends Run0 {
 
-	public Run2(Run0 r) {
+	public Run2() {
 		super();
-		this.r = r;
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			try {
-				sq.take();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.takeSq();// Put Start
 			System.out.println("Run2....");
-			r.sendMsg("Ciao");
 			try {
-				Thread.sleep(2000);
+				System.out.println(this.msg.take());
+				this.sendMsg("Run2ToRun1");
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("Run2....I have slept");
+			this.countDown();
 			try {
-				sq.put(10);
-			} catch (InterruptedException e) {
+				while (!this.ended.await(10, TimeUnit.MILLISECONDS)) {
+					String str = this.msg.poll(10, TimeUnit.MILLISECONDS);
+					if (str != null) {
+						System.out.println(str);
+						this.sendMsg("Nipote ");
+					}
+				}
+			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
+			} finally {
+				this.putSq(0);
 			}
+
 		}
-		
+
 	}
 
 }

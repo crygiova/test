@@ -5,10 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MainTest implements Observer {
 
@@ -16,7 +12,9 @@ public class MainTest implements Observer {
 	public static SimulationCalendar cal;
 	public static CountDownLatch hasToWaitFor = new CountDownLatch(1);
 	public static CountDownLatch hasToCountDown = new CountDownLatch(1);
-	public static CountDownRunnable cdr;
+	
+	
+	public static CountDownLatch ended = new CountDownLatch(2);
 	public static TimerTask myTask = new TimerTask() {
 		@Override
 		public void run() {
@@ -29,7 +27,6 @@ public class MainTest implements Observer {
 	public synchronized static void updateReferences() {
 		hasToWaitFor = new CountDownLatch(1);
 		hasToCountDown = new CountDownLatch(1);
-		cdr.updateCoundDowndReferences(hasToWaitFor, hasToCountDown);
 	}
 
 	
@@ -38,7 +35,10 @@ public class MainTest implements Observer {
 		cal = SimulationCalendar.getInstance();
 		Run0 r[] = new Run0[2];
 		r[0] = new Run1();
-		r[1] = new Run2(r[0]);
+
+		r[1] = new Run2();		
+		r[0].init(r[1], ended);
+		r[1].init(r[0], ended);
 		Thread t[] = new Thread[2];
 		t[0] = new Thread(r[0]);
 		t[1] = new Thread(r[1]);
@@ -49,15 +49,17 @@ public class MainTest implements Observer {
 		t[1].start();
 		
 		while (true) {
-			r[0].getSq().put(10);
-			r[1].getSq().put(10);
-			
-//			sq.put(10);
-			r[0].getSq().take();
-			r[1].getSq().take();
-			cal.add(cal.HOUR_OF_DAY, 1);
+			r[0].putSq(0);
+			r[1].putSq(0);
+			ended.await();
+			r[0].takeSq();
+			r[1].takeSq();
+			ended = new CountDownLatch(2);
+			r[0].updateCountdownReference(ended);
+			r[1].updateCountdownReference(ended);
+
+			cal.add(Calendar.HOUR_OF_DAY, 1);
 			System.out.println("ADDING one hour " + cal.getTime());
-			Thread.sleep(1000);
 		}
 	}
 	
