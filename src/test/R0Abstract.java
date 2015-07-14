@@ -30,8 +30,8 @@ public abstract class R0Abstract implements Runnable {
 
 	}
 
-	public void updateEndOfSimulationTasks(CountDownLatch ended) {
-		this.endOfSimulationTasks = ended;
+	public void updateEndOfSimulationTasks(CountDownLatch cdl) {
+		this.endOfSimulationTasks = cdl;
 		this.countDown = true;
 	}
 
@@ -48,7 +48,6 @@ public abstract class R0Abstract implements Runnable {
 		try {
 			buffer = this.simulationToken.take();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return buffer;
@@ -58,7 +57,6 @@ public abstract class R0Abstract implements Runnable {
 		try {
 			this.simulationToken.put(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -73,17 +71,16 @@ public abstract class R0Abstract implements Runnable {
 		peer.addMessage(msg);
 	}
 
-	public String takeMsg() {
+	public String takeMessage() {
 		try {
 			return this.messageQueue.take();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public String pollMsgMs(long timeout) {
+	public String pollMessageMs(long timeout) {
 		try {
 			return this.messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {

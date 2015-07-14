@@ -1,45 +1,51 @@
 package test;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+public class R2Client extends R0Abstract {
 
-public class R2Client extends Run0 {
+	R0Abstract server;
 
 	public R2Client() {
 		super();
+	}
+
+	public void setServer(R0Abstract server) {
+		this.server = server;
 	}
 
 	@Override
 	public void run() {
 		while (true) {
 			// start execution
-			this.takeSq();
+			this.takeSimulationToken();
 			// TODO run tasks
-			System.out.println("Run2..Tasks..");
-
+			System.out.println("Client....");
 			// TODO if there are messages use those till the queue is not empty
 			String str;
 			// while (!this.msg.isEmpty()) {
-			while ((str = this.pollMsgMs(10)) != null) {
-				System.out.println("ReceivedRun2Pre:"+str);
-				this.sendMsg("SendedByRun2PreInRespTo " + str);
+			while ((str = this.pollMessageMs(10)) != null) {
+				System.out.println("Client<-Server: " + str);
+				str += " RESP1";
+				System.out.println("Client->Server: " + str);
+				this.sendMessage(this.server, str);
 			}
 			// Notify the end of the tasks
-			this.countDown();
-			System.out.println("Run2EndedTasks");
+			this.notifyEndOfSimulationTasks();
+			System.out.println("ClientEndOfSimTasks");
 			// TODO if there are messages use those till the simulator does not
-			while (!this.isRelease() || !this.msg.isEmpty()) {
-				str = this.pollMsgMs(10);
+			while (!this.isReleaseToken() || !this.messageQueue.isEmpty()) {
+				str = this.pollMessageMs(10);
 				if (str != null) {
-					System.out.println("ReceivedRun2Post:" + str);
-					this.sendMsg("SendedByRun2PostInRespTo " + str);
+					System.out.println("Client<-Server: " + str);
+					str += " RESP2";
+					System.out.println("Client->Server: " + str);
+					this.sendMessage(this.server, str);
 				}
 			}
 			// send the release signal
 			// TODO wait for signal of the simulator to putSQ
 			// TODO use release for putSq
-			this.setRelease(false);
-			this.putSq(0);
+			this.setReleaseToken(false);
+			this.releaseSimulationToken();
 		}
 	}
 }
