@@ -12,8 +12,7 @@ public class MainTest implements Observer {
 	public static SimulationCalendar cal;
 	public static CountDownLatch hasToWaitFor = new CountDownLatch(1);
 	public static CountDownLatch hasToCountDown = new CountDownLatch(1);
-	
-	
+
 	public static CountDownLatch ended = new CountDownLatch(2);
 	public static TimerTask myTask = new TimerTask() {
 		@Override
@@ -29,115 +28,124 @@ public class MainTest implements Observer {
 		hasToCountDown = new CountDownLatch(1);
 	}
 
-	
+	public static void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) throws NoSuchFieldException,
 			SecurityException, InterruptedException {
 		cal = SimulationCalendar.getInstance();
 		Run0 r[] = new Run0[2];
 		r[0] = new Run1();
 
-		r[1] = new Run2();		
+		r[1] = new Run2();
 		r[0].init(r[1], ended);
 		r[1].init(r[0], ended);
 		Thread t[] = new Thread[2];
 		t[0] = new Thread(r[0]);
 		t[1] = new Thread(r[1]);
-		
+
 		cal.startSimulationCalendar(6000);
 		System.out.println("Run");
 		t[0].start();
 		t[1].start();
-		
+
 		while (true) {
 			r[0].putSq(0);
 			r[1].putSq(0);
 			ended.await();
+			r[0].setRelease(true);
+			r[1].setRelease(true);
 			r[0].takeSq();
 			r[1].takeSq();
 			ended = new CountDownLatch(2);
 			r[0].updateCountdownReference(ended);
 			r[1].updateCountdownReference(ended);
-
+			MainTest.sleep(2000);
 			cal.add(Calendar.HOUR_OF_DAY, 1);
 			System.out.println("ADDING one hour " + cal.getTime());
 		}
 	}
-	
-	
-//	public static void main(String[] args) throws NoSuchFieldException,
-//	SecurityException, InterruptedException {
-//cal = SimulationCalendar.getInstance();
-//Semaphore rl = new Semaphore(1, true);
-//LinkedBlockingDeque<Integer> in = new LinkedBlockingDeque<Integer>();
-//LinkedBlockingDeque<Integer> out = new LinkedBlockingDeque<Integer>();
-//SynchronousQueue<Integer> sq = new SynchronousQueue<Integer>();
-//SchedulerTest st = new SchedulerTest(cal, in, out, sq);
-//cal.startSimulationCalendar(6000);
-//System.out.println("Run");
-//Thread th = new Thread(st);
-//th.start();
-//while (true) {
-//	sq.put(10);
-//	sq.take();
-//	System.out.println("Sleeping " + cal.getTime());
-//	cal.add(cal.HOUR_OF_DAY, 1);
-//	System.out.println("ADDING one hour " + cal.getTime());
-//	Thread.sleep(1000);
-//}
-//}
 
-//	public static void main(String[] args) throws NoSuchFieldException,
-//			SecurityException, InterruptedException {
-//		cal = SimulationCalendar.getInstance();
-//		Semaphore rl = new Semaphore(1,true);
-//		LinkedBlockingDeque<Integer> in = new LinkedBlockingDeque<Integer>();
-//		LinkedBlockingDeque<Integer> out = new LinkedBlockingDeque<Integer>();
-//		SchedulerTest st = new SchedulerTest(cal, in,out);
-//		cal.startSimulationCalendar(6000);
-//		System.out.println("Run");
-//		Thread th = new Thread(st);
-//		th.start();
-//		while (true) {
-//			
-//			in.add(10);
-//			//Aggregator
-//			out.takeFirst();
-//			System.out.println("Sleeping " + cal.getTime());
-//			cal.add(cal.HOUR_OF_DAY, 1);
-//			System.out.println("ADDING one hour " + cal.getTime());
-//			Thread.sleep(1000);
-//		}
-//	}
+	// public static void main(String[] args) throws NoSuchFieldException,
+	// SecurityException, InterruptedException {
+	// cal = SimulationCalendar.getInstance();
+	// Semaphore rl = new Semaphore(1, true);
+	// LinkedBlockingDeque<Integer> in = new LinkedBlockingDeque<Integer>();
+	// LinkedBlockingDeque<Integer> out = new LinkedBlockingDeque<Integer>();
+	// SynchronousQueue<Integer> sq = new SynchronousQueue<Integer>();
+	// SchedulerTest st = new SchedulerTest(cal, in, out, sq);
+	// cal.startSimulationCalendar(6000);
+	// System.out.println("Run");
+	// Thread th = new Thread(st);
+	// th.start();
+	// while (true) {
+	// sq.put(10);
+	// sq.take();
+	// System.out.println("Sleeping " + cal.getTime());
+	// cal.add(cal.HOUR_OF_DAY, 1);
+	// System.out.println("ADDING one hour " + cal.getTime());
+	// Thread.sleep(1000);
+	// }
+	// }
 
-//	public static void main(String[] args) throws NoSuchFieldException,
-//			SecurityException, InterruptedException {
-//		cal = SimulationCalendar.getInstance();
-//		// SimCalObservable obs = new SimCalObservable(cal);
-//		// obs.addObserver(new MainTest());
-//		System.out.println("Start " + cal.getInstance().getTime() + " CC "
-//				+ Calendar.getInstance().getTime());
-//		cdr = new CountDownRunnable();
-//		cdr.updateCoundDowndReferences(hasToWaitFor, hasToCountDown);
-//		// Timer timer = new Timer();
-//		cal.startSimulationCalendar(6000);
-//		Thread th = new Thread(cdr);
-//		th.start();
-//		System.out.println("Run");
-//		while (true) {
-//			hasToCountDown.await();
-//			Thread.sleep(2000);
-//			cal.add(cal.HOUR_OF_DAY, 1);
-//			System.out.println("ADDING one hour " + cal.getTime());
-//			hasToWaitFor.countDown();
-//			updateReferences();
-//		}
-//		// testSimulationCalendar();
-//
-//		// CalendarTest.addNMinutesToTime(Calendar.getInstance());
-//		// CalDemo();
-//		// System.out.println("Stop");
-//
-//	}
+	// public static void main(String[] args) throws NoSuchFieldException,
+	// SecurityException, InterruptedException {
+	// cal = SimulationCalendar.getInstance();
+	// Semaphore rl = new Semaphore(1,true);
+	// LinkedBlockingDeque<Integer> in = new LinkedBlockingDeque<Integer>();
+	// LinkedBlockingDeque<Integer> out = new LinkedBlockingDeque<Integer>();
+	// SchedulerTest st = new SchedulerTest(cal, in,out);
+	// cal.startSimulationCalendar(6000);
+	// System.out.println("Run");
+	// Thread th = new Thread(st);
+	// th.start();
+	// while (true) {
+	//
+	// in.add(10);
+	// //Aggregator
+	// out.takeFirst();
+	// System.out.println("Sleeping " + cal.getTime());
+	// cal.add(cal.HOUR_OF_DAY, 1);
+	// System.out.println("ADDING one hour " + cal.getTime());
+	// Thread.sleep(1000);
+	// }
+	// }
+
+	// public static void main(String[] args) throws NoSuchFieldException,
+	// SecurityException, InterruptedException {
+	// cal = SimulationCalendar.getInstance();
+	// // SimCalObservable obs = new SimCalObservable(cal);
+	// // obs.addObserver(new MainTest());
+	// System.out.println("Start " + cal.getInstance().getTime() + " CC "
+	// + Calendar.getInstance().getTime());
+	// cdr = new CountDownRunnable();
+	// cdr.updateCoundDowndReferences(hasToWaitFor, hasToCountDown);
+	// // Timer timer = new Timer();
+	// cal.startSimulationCalendar(6000);
+	// Thread th = new Thread(cdr);
+	// th.start();
+	// System.out.println("Run");
+	// while (true) {
+	// hasToCountDown.await();
+	// Thread.sleep(2000);
+	// cal.add(cal.HOUR_OF_DAY, 1);
+	// System.out.println("ADDING one hour " + cal.getTime());
+	// hasToWaitFor.countDown();
+	// updateReferences();
+	// }
+	// // testSimulationCalendar();
+	//
+	// // CalendarTest.addNMinutesToTime(Calendar.getInstance());
+	// // CalDemo();
+	// // System.out.println("Stop");
+	//
+	// }
 
 	// public static void main(String[] args) throws NoSuchFieldException,
 	// SecurityException, InterruptedException {

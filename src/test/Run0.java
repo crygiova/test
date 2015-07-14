@@ -3,14 +3,19 @@ package test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Run0 implements Runnable {
 
+	// TODO make it client server, means that the AG can have a list of clients
+	// which
+	// at the moment are peers and the Prosumers they can have only a server at
+	// the moment
 	protected SynchronousQueue<Integer> sq;
 	protected LinkedBlockingQueue<String> msg;
 	protected Run0 peer;
 	CountDownLatch ended;
-	boolean start = false;
+	boolean release = false;
 
 	public Run0() {
 		super();
@@ -60,7 +65,35 @@ public abstract class Run0 implements Runnable {
 		this.peer.inputMsg(msg);
 	}
 
+	public String takeMsg() {
+		try {
+			return this.msg.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String pollMsgMs(long timeout) {
+		try {
+			return this.msg.poll(timeout,TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void updateCountdownReference(CountDownLatch ended) {
 		this.ended = ended;
+	}
+
+	public boolean isRelease() {
+		return release;
+	}
+
+	public void setRelease(boolean release) {
+		this.release = release;
 	}
 }

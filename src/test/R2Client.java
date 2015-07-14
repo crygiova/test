@@ -3,9 +3,9 @@ package test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class Run2 extends Run0 {
+public class R2Client extends Run0 {
 
-	public Run2() {
+	public R2Client() {
 		super();
 	}
 
